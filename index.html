@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Listening Bot</title>
+
+<style>
+    body {
+	font-family: Arial, sans-serif;
+	background-color: #FAFAFA;
+	display: flex;
+	flex-direction: column;
+	height:100vh;
+	margin: 0;
+    }
+
+    .robot-header {
+	background-color:#4A90E2;
+	color: white;
+	font-weight: bold;
+	padding: 20px;
+	text-align: center;
+	border-bottom-left-radius: 20px;
+	border-bottom-right-radius: 20px;
+	box-shadow: 0 2px 5 px rgba*0,0,0,0.1);
+    }
+
+    .robot-eyes {
+	font-size: 2em;
+    }
+
+    .message {
+	max-width: 70%;
+	padding: 10px 15px;
+	border-radius: 20px;
+	line-height: 1.4;
+	word-wrap: break-word;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .bot-message {
+	background-color: #E0F7FA;
+	color: #004D40;
+	align-self: flex-start;
+    }
+
+    .user-message {
+	background-color: #FFF3E0
+	color: #5D4037;
+	align-self: flex-end;
+    }
+
+    .input-container {
+    position: sticky;
+    bottom: 0;
+    background-color: #FAFAFA;
+    padding: 10px 20px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #ccc;
+    z-index: 10;
+}
+
+.input-container input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.input-container button {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background-color: #4A90E2;
+    color: white;
+    cursor: pointer;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.button-container button {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: none;
+    background-color: #4A90E2;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.button-container button:hover {
+    background-color: #357ABD;
+}
+
+.chat-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    position: relative; /* needed for ::before */
+}
+
+.chat-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url('logo.jpg'); /* your JPG logo */
+    background-repeat: no-repeat;
+    background-size: contain; /* adjust as needed */
+    background-position: center;
+    opacity: 0.1; /* subtle */
+    width: 80%;
+    height: 80%;
+    pointer-events: none; /* makes clicks go through */
+    z-index: 0; /* behind messages */
+}
+
+.message {
+    position: relative;
+    z-index: 1; /* ensures text is above watermark */
+}
+
+
+.chat-container {
+    background-attachment: fixed;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- Header -->
+
+<header class="robot-header">
+    <div class="robot-eyes">👀</div>
+    <h1>The Listening Bot</h1>
+</header>
+
+<!-- Chat Messages -->
+
+<div class="chat-container">
+
+<!-- Bot message -->
+
+    <div class="message bot-message">
+	<p>I'm here to listen. You don't have to know what to say.</p>
+    </div>
+</div>
+
+<!--User input -->
+
+<div class="input-container">
+    <input type="text" id="userInput" placeholder="Type your message here...">
+    <button id="sendButton">Send</button>
+</div>
+
+<script>
+    const sendButton = document.getElementById('sendButton');
+    const userInput = document.getElementById('userInput');
+    const chatContainer = document.querySelector('.chat-container');
+
+    const botResponses = [
+	"Thank you for sharing that with me.",
+	"I'm here with you. Take your time.",
+	"That sounds like a lot. I'm listening.",
+	"You don't have to have the right words.",
+	"I'm glad you told me."
+    ];
+
+    const choicePrompt =
+	"Would you like a thought, or would you prefer I just listen?";
+
+    const listeningResponses = [
+	"I'm here. You can keep going if you'd like.",
+	"Thank you for letting me listen.",
+	"I'm with you.",
+    ];
+
+    const thoughtResponses = [
+	"Sometimes being tired is your body asking for kindness.",
+	"You don't have to solve everything right now.",
+	"It's okay to move slowly."
+    ];
+
+    sendButton.addEventListener('click', () => {
+        const messageText = userInput.value.trim();
+        if (messageText === "") return;
+
+        // Create new user message
+        const newMessage = document.createElement('div');
+        newMessage.classList.add('message', 'user-message');
+
+        const messageParagraph = document.createElement('p');
+        messageParagraph.textContent = messageText;
+
+        newMessage.appendChild(messageParagraph);
+        chatContainer.appendChild(newMessage);
+    
+    setTimeout(() => {
+	const botMessage = document.createElement('div');
+	botMessage.classList.add('message', 'bot-message');
+
+	const botParagraph = document.createElement('p');
+	const randomIndex = Math.floor(Math.random() * botResponses.length);
+	botParagraph.textContent = botResponses[randomIndex];
+
+	botMessage.appendChild(botParagraph);
+	chatContainer.appendChild(botMessage);
+
+    const choiceMessage = document.createElement('div');
+    choiceMessage.classList.add('message', 'bot-message');
+
+    const choiceParagraph = document.createElement('p');
+    choiceParagraph.textContent = choicePrompt;
+
+    choiceMessage.appendChild(choiceParagraph);
+    chatContainer.appendChild(choiceMessage);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('button-container');
+
+    const listenButton = document.createElement('button');
+    listenButton.textContent = "Just listen";
+
+    const thoughtButton = document.createElement('button');
+    thoughtButton.textContent = "A thought";
+
+    buttonContainer.appendChild(listenButton);
+    buttonContainer.appendChild(thoughtButton);
+    chatContainer.appendChild(buttonContainer);
+
+    listenButton.addEventListener('click', () => {
+	const reply = document.createElement('div');
+	reply.classList.add('message', 'bot-message');
+
+	const text = document.createElement('p');
+	const randomIndex = Math.floor(Math.random() * listeningResponses.length);
+	text.textContent = listeningResponses[randomIndex];
+
+	reply.appendChild(text);
+	chatContainer.appendChild(reply);
+
+	buttonContainer.remove();
+	chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
+
+    thoughtButton.addEventListener('click', () => {
+	const reply = document.createElement('div');
+	reply.classList.add('message', 'bot-message');
+
+	const text = document.createElement('p');
+        const randomIndex = Math.floor(Math.random() * thoughtResponses.length);
+        text.textContent = thoughtResponses[randomIndex];
+
+    reply.appendChild(text);
+    chatContainer.appendChild(reply);
+
+    buttonContainer.remove();
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+});
+
+	chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 800);
+
+        // Clear input field
+        userInput.value = "";
+
+        // Scroll to bottom
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
+
+    userInput.addEventListener('keydown', (event) => {
+	if (event.key === 'Enter') {
+	    sendButton.click();
+	}
+    });
+</script>
+	
+
+</body>
+</html>
